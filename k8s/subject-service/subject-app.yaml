@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: subject-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: subject-app
+  template:
+    metadata:
+      labels:
+        app: subject-app
+    spec:
+      containers:
+      - name: subject-service
+        # IDE a lokális docker image-ed nevét kell írni. 
+        image: flvvgiprojekt-subject-service:latest
+        imagePullPolicy: Never 
+        ports:
+        - containerPort: 5002
+        env:
+        - name: PORT
+          value: "5002"
+        - name: DB_HOST
+          value: "subject-db-service" 
+        - name: DB_USER
+          valueFrom:
+            configMapKeyRef:
+              name: global-config
+              key: DB_USER
+        - name: DB_NAME
+          value: "subject_service_db"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: global-secrets
+              key: mysql-root-password
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: global-secrets
+              key: jwt-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: subject-app-service 
+spec:
+  type: ClusterIP # Egyelőre csak belső hálózaton érhető el
+  ports:
+  - port: 5002
+    targetPort: 5002
+  selector:
+    app: subject-app

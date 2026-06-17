@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-app
+  template:
+    metadata:
+      labels:
+        app: user-app
+    spec:
+      containers:
+      - name: user-service
+        # IDE a lokális docker image-ed nevét kell írni. 
+        image: flvvgiprojekt-user-service:latest
+        imagePullPolicy: Never 
+        ports:
+        - containerPort: 5001
+        env:
+        - name: PORT
+          value: "5001"
+        - name: DB_HOST
+          value: "user-db-service" 
+        - name: DB_USER
+          valueFrom:
+            configMapKeyRef:
+              name: global-config
+              key: DB_USER
+        - name: DB_NAME
+          value: "user_service_db"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: global-secrets
+              key: mysql-root-password
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: global-secrets
+              key: jwt-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-app-service # Ez a név szerepel a global-config.yaml-ban!
+spec:
+  type: ClusterIP # Egyelőre csak belső hálózaton érhető el
+  ports:
+  - port: 5001
+    targetPort: 5001
+  selector:
+    app: user-app

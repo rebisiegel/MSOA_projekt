@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  # --- KÖZÖS ADATBÁZIS SZOLGÁLTATÓ ---
+  mysql-db:
+    image: mysql:8.0
+    container_name: orarend-mysql
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: supersecretpassword
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init-dbs:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-psupersecretpassword"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - orarend-network
+
+  # --- USER SERVICE ---
+  user-service:
+    build: ./user-service
+    container_name: user-service
+    ports:
+      - "5001:5001"
+    environment:
+      - PORT=5001
+      - DB_HOST=mysql-db
+      - DB_USER=root
+      - DB_PASSWORD=supersecretpassword
+      - DB_NAME=user_service_db
+      - JWT_SECRET=secretkey
+    depends_on:
+      mysql-db:
+        condition: service_healthy 
+    networks:
+      - orarend-network
+
+  # --- SUBJECT SERVICE ---
+  subject-service:
+    build: ./subject-service
+    container_name: subject-service
+    ports:
+      - "5002:5002"
+    environment:
+      - PORT=5002
+      - DB_HOST=mysql-db
+      - DB_USER=root
+      - DB_PASSWORD=supersecretpassword
+      - DB_NAME=subject_service_db
+      - SCHEDULE_SERVICE_URL=http://schedule-service:5003
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    networks:
+      - orarend-network
+
+  # --- SCHEDULE SERVICE ---
+  schedule-service:
+    build: ./schedule-service
+    container_name: schedule-service
+    ports:
+      - "5003:5003"
+    environment:
+      - PORT=5003
+      - DB_HOST=mysql-db
+      - DB_USER=root
+      - DB_PASSWORD=supersecretpassword
+      - DB_NAME=schedule_service_db
+      - USER_SERVICE_URL=http://user-service:5001
+      - SUBJECT_SERVICE_INTERNAL_URL=http://subject-service:5002
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    networks:
+      - orarend-network
+
+volumes:
+  mysql_data:
+
+networks:
+  orarend-network:
+    driver: bridge

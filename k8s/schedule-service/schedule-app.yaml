@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: schedule-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: schedule-app
+  template:
+    metadata:
+      labels:
+        app: schedule-app
+    spec:
+      containers:
+      - name: schedule-service
+        # IDE a lokális docker image-ed nevét kell írni. 
+        image: flvvgiprojekt-schedule-service:latest
+        imagePullPolicy: Never 
+        ports:
+        - containerPort: 5003
+        env:
+        - name: PORT
+          value: "5003"
+        - name: DB_HOST
+          value: "schedule-db-service" 
+        - name: DB_USER
+          valueFrom:
+            configMapKeyRef:
+              name: global-config
+              key: DB_USER
+        - name: DB_NAME
+          value: "schedule_service_db"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: global-secrets
+              key: mysql-root-password
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: global-secrets
+              key: jwt-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: schedule-app-service 
+spec:
+  type: ClusterIP # Egyelőre csak belső hálózaton érhető el
+  ports:
+  - port: 5003
+    targetPort: 5003
+  selector:
+    app: schedule-app

@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: global-config
+data:
+  DB_USER: "root"
+  USER_SERVICE_URL: "http://user-app-service:5001"
+  SUBJECT_SERVICE_URL: "http://subject-app-service:5002"
+  SCHEDULE_SERVICE_URL: "http://schedule-app-service:5003"
