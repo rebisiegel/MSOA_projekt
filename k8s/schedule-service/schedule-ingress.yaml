@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: schedule-ingress
+spec:
+  ingressClassName: gce
+  rules:
+  - http:
+      paths:
+      - path: /api/schedules
+        pathType: Prefix
+        backend:
+          service:
+            name: schedule-app-service
+            port:
+              number: 5003

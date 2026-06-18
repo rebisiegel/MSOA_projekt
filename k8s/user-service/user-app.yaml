@@ -45,7 +45,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: user-app-service # Ez a név szerepel a global-config.yaml-ban!
+  name: user-app-service 
 spec:
   type: ClusterIP # Egyelőre csak belső hálózaton érhető el
   ports:

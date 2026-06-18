@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: subject-ingress
+spec:
+  ingressClassName: gce
+  rules:
+  - http:
+      paths:
+      - path: /api/subjects
+        pathType: Prefix
+        backend:
+          service:
+            name: subject-app-service
+            port:
+              number: 5002
