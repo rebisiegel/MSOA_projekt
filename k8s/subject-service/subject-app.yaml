@@ -15,7 +15,7 @@ spec:
       containers:
       - name: subject-service
         image: europe-west3-docker.pkg.dev/msoa-projekt/orarend-repo/subject-service:latest
-        imagePullPolicy: Never 
+        imagePullPolicy: Always 
         ports:
         - containerPort: 5002
         env:

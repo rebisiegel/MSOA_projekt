@@ -15,7 +15,7 @@ spec:
       containers:
       - name: schedule-service
         image: europe-west3-docker.pkg.dev/msoa-projekt/orarend-repo/schedule-service:latest
-        imagePullPolicy: Never 
+        imagePullPolicy: Always 
         ports:
         - containerPort: 5003
         env:
