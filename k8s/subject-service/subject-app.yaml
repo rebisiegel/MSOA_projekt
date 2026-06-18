@@ -14,8 +14,7 @@ spec:
     spec:
       containers:
       - name: subject-service
-        # IDE a lokális docker image-ed nevét kell írni. 
-        image: flvvgiprojekt-subject-service:latest
+        image: europe-west3-docker.pkg.dev/msoa-projekt/orarend-repo/subject-service:latest
         imagePullPolicy: Never 
         ports:
         - containerPort: 5002
@@ -47,7 +46,7 @@ kind: Service
 metadata:
   name: subject-app-service 
 spec:
-  type: ClusterIP # Egyelőre csak belső hálózaton érhető el
+  type: ClusterIP 
   ports:
   - port: 5002
     targetPort: 5002

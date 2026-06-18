@@ -14,8 +14,7 @@ spec:
     spec:
       containers:
       - name: schedule-service
-        # IDE a lokális docker image-ed nevét kell írni. 
-        image: flvvgiprojekt-schedule-service:latest
+        image: europe-west3-docker.pkg.dev/msoa-projekt/orarend-repo/schedule-service:latest
         imagePullPolicy: Never 
         ports:
         - containerPort: 5003
@@ -47,7 +46,7 @@ kind: Service
 metadata:
   name: schedule-app-service 
 spec:
-  type: ClusterIP # Egyelőre csak belső hálózaton érhető el
+  type: ClusterIP
   ports:
   - port: 5003
     targetPort: 5003

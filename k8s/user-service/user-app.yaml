@@ -14,8 +14,7 @@ spec:
     spec:
       containers:
       - name: user-service
-        # IDE a lokális docker image-ed nevét kell írni. 
-        image: flvvgiprojekt-user-service:latest
+        image: europe-west3-docker.pkg.dev/msoa-projekt/orarend-repo/user-service:latest
         imagePullPolicy: Never 
         ports:
         - containerPort: 5001
@@ -47,7 +46,7 @@ kind: Service
 metadata:
   name: user-app-service 
 spec:
-  type: ClusterIP # Egyelőre csak belső hálózaton érhető el
+  type: ClusterIP 
   ports:
   - port: 5001
     targetPort: 5001
