@@ -46,7 +46,7 @@ kind: Service
 metadata:
   name: user-app-service 
 spec:
-  type: ClusterIP 
+  type: NodePort 
   ports:
   - port: 5001
     targetPort: 5001

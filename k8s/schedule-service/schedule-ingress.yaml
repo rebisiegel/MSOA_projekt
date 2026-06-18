@@ -2,8 +2,15 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: schedule-ingress
+  annotations:     
+    kubernetes.io/ingress.class: "gce"
+    kubernetes.io/ingress.allow-http: "true"
 spec:
-  ingressClassName: gce
+  defaultBackend:                               
+    service:
+      name: schedule-app-service
+      port:
+        number: 5003
   rules:
   - http:
       paths:

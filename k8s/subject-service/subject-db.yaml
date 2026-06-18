@@ -1,3 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: subject-db-pvc  
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -15,6 +26,9 @@ spec:
       containers:
       - name: mysql
         image: mysql:8.0
+        volumeMounts:
+        - name: subject-db-storage
+          mountPath: /var/lib/mysql
         ports:
         - containerPort: 3306
         env:
@@ -24,7 +38,11 @@ spec:
               name: global-secrets
               key: mysql-root-password
         - name: MYSQL_DATABASE
-          value: "subject_service_db"
+          value: "subject_service_db" 
+      volumes:
+      - name: subject-db-storage
+        persistentVolumeClaim:
+          claimName: subject-db-pvc  
 ---
 apiVersion: v1
 kind: Service

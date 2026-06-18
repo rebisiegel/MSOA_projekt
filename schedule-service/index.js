@@ -30,6 +30,11 @@ app.use(cookieParser());
 
 waitForDatabase();
 createTables();
+
+app.get('/', (req, res) => {
+    res.status(200).send('OK');
+});
+
 app.use(authenticateToken);
 
 app.use('/api/schedules', adminAPI);

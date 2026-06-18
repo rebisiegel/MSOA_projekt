@@ -46,7 +46,7 @@ kind: Service
 metadata:
   name: schedule-app-service 
 spec:
-  type: ClusterIP
+  type: NodePort
   ports:
   - port: 5003
     targetPort: 5003

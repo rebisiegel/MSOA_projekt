@@ -1,3 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: schedule-db-pvc 
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -15,6 +26,9 @@ spec:
       containers:
       - name: mysql
         image: mysql:8.0
+        volumeMounts:
+        - name: schedule-db-storage
+          mountPath: /var/lib/mysql
         ports:
         - containerPort: 3306
         env:
@@ -24,7 +38,11 @@ spec:
               name: global-secrets
               key: mysql-root-password
         - name: MYSQL_DATABASE
-          value: "schedule_service_db"
+          value: "schedule_service_db"  
+      volumes:
+      - name: schedule-db-storage
+        persistentVolumeClaim:
+          claimName: schedule-db-pvc  
 ---
 apiVersion: v1
 kind: Service
